@@ -1,0 +1,16 @@
+version: '3.8'
+
+services:
+
+  doubleup-db:
+    build:
+      context: .
+      dockerfile: ./db/Dockerfile
+    container_name: doubleup-db-container
+    restart: always
+    environment:
+      POSTGRES_PASSWORD: admin_password
+    ports:
+      - "5433:5432"
+    volumes:
+      - ./db/init.sql:/docker-entrypoint-initdb.d/init.sql
