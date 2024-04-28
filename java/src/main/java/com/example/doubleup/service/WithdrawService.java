@@ -21,12 +21,12 @@ public class WithdrawService {
 
     @Transactional
     public String withdraw(Player player) {
+        Withdrawal withdrawal = new Withdrawal(player, LocalDateTime.now(), player.getMoneyInPlay());
+        withdrawalRepository.save(withdrawal);
+
         player.setAccountBalance(player.getAccountBalance() + player.getMoneyInPlay());
         player.setMoneyInPlay(0L);
         playerRepository.save(player);
-
-        Withdrawal withdrawal = new Withdrawal(player, LocalDateTime.now(), player.getMoneyInPlay());
-        withdrawalRepository.save(withdrawal);
 
         return "OK";
     }

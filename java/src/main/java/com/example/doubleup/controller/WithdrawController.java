@@ -15,7 +15,7 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/withdraw")
-public class WithdrawContoller {
+public class WithdrawController {
 
     @Autowired
     private PlayerRepository playerRepository;
