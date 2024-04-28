@@ -26,6 +26,7 @@ CREATE TABLE game (
 	player_choice VARCHAR(100) NOT NULL,
 	card_drawn SMALLINT NOT NULL,
 	potential_profit BIGINT NOT NULL,
+	game_result VARCHAR(100) NOT NULL,
 	FOREIGN KEY (player_id) REFERENCES player (id),
 	CONSTRAINT chk_bet_size_non_negative CHECK (bet_size >= 0),
 	CONSTRAINT chk_card_drawn_between CHECK (card_drawn BETWEEN 1 AND 13),

@@ -1,7 +1,10 @@
 package com.example.doubleup.model;
 
+import com.example.doubleup.enums.GameResult;
 import com.example.doubleup.enums.SmallLargeChoice;
 import jakarta.persistence.Entity;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.EnumType;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.JoinColumn;
@@ -29,22 +32,27 @@ public class Game {
 
     private Long betSize;
 
+    @Enumerated(EnumType.STRING)
     private SmallLargeChoice playerChoice;
 
     private Short cardDrawn;
 
     private Long potentialProfit;
 
+    @Enumerated(EnumType.STRING)
+    private GameResult gameResult;
+
     public Game() {
     }
 
-    public Game(Player player, LocalDateTime createdAt, Long betSize, SmallLargeChoice playerChoice, Short cardDrawn, Long potentialProfit) {
+    public Game(Player player, LocalDateTime createdAt, Long betSize, SmallLargeChoice playerChoice, Short cardDrawn, Long potentialProfit, GameResult gameResult) {
         this.player = player;
         this.createdAt = createdAt;
         this.betSize = betSize;
         this.playerChoice = playerChoice;
         this.cardDrawn = cardDrawn;
         this.potentialProfit = potentialProfit;
+        this.gameResult = gameResult;
     }
 
     public UUID getId() {
@@ -101,5 +109,13 @@ public class Game {
 
     public void setPotentialProfit(Long potentialProfit) {
         this.potentialProfit = potentialProfit;
+    }
+
+    public GameResult getGameResult() {
+        return gameResult;
+    }
+
+    public void setGameResult(GameResult gameResult) {
+        this.gameResult = gameResult;
     }
 }

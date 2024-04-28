@@ -51,7 +51,7 @@ public class PlayService {
         PlayResponseDto playResponseDto = processGame(betSize, choice, player.getAccountBalance());
         player.setMoneyInPlay(playResponseDto.getMoneyInPlay());
         playerRepository.save(player);
-        Game game = new Game(player, LocalDateTime.now(), betSize, choice, playResponseDto.getCardDrawn(), betSize * 2);
+        Game game = new Game(player, LocalDateTime.now(), betSize, choice, playResponseDto.getCardDrawn(), betSize * 2, playResponseDto.getGameResult());
         gameRepository.save(game);
         return playResponseDto;
     }
