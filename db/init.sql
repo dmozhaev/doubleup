@@ -55,13 +55,12 @@ CREATE TABLE audit_log (
     id UUID PRIMARY KEY,
 	player_id UUID NOT NULL,
 	record_id UUID NOT NULL,
+	target_table VARCHAR(100) NOT NULL,
 	created_at TIMESTAMP NOT NULL,
 	operation VARCHAR(100) NOT NULL,
 	FOREIGN KEY (player_id) REFERENCES player (id),
-	FOREIGN KEY (record_id) REFERENCES player (id),
-	FOREIGN KEY (record_id) REFERENCES game (id),
-	FOREIGN KEY (record_id) REFERENCES withdrawal (id),
-	CONSTRAINT chk_operation CHECK (operation IN ('SELECT', 'INSERT', 'UPDATE'))
+	CONSTRAINT chk_operation CHECK (operation IN ('SELECT', 'INSERT', 'UPDATE')),
+	CONSTRAINT chk_target_table CHECK (target_table IN ('player', 'game', 'withdrawal'))
 );
 
 -- indexes for potentially frequently used queries 

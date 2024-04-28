@@ -3,6 +3,7 @@ package com.example.doubleup.service;
 import com.example.doubleup.dao.GameRepository;
 import com.example.doubleup.dao.PlayerRepository;
 import com.example.doubleup.dto.PlayResponseDto;
+import com.example.doubleup.enums.AuditOperation;
 import com.example.doubleup.enums.GameResult;
 import com.example.doubleup.enums.SmallLargeChoice;
 import com.example.doubleup.model.Game;
@@ -25,12 +26,17 @@ public class PlayService {
     @Autowired
     private GameRepository gameRepository;
 
+    @Autowired
+    private AuditLogService auditLogService;
+
     public Player getPlayer(UUID id) throws Exception {
         Optional<Player> playerOptional = playerRepository.findById(id);
         if (playerOptional.isEmpty()) {
             throw new Exception("Player id: " + id + " not found!");
         }
-        return playerOptional.get();
+        Player player = playerOptional.get();
+        auditLogService.writeAuditLog(player, AuditOperation.SELECT, player.getId(), "player");
+        return player;
     }
 
     private PlayResponseDto processGame(Long betSize, SmallLargeChoice playerChoice, Long accountBalance) {
@@ -61,8 +67,12 @@ public class PlayService {
         PlayResponseDto playResponseDto = processGame(betSize, choice, player.getAccountBalance());
         player.setMoneyInPlay(playResponseDto.getMoneyInPlay());
         playerRepository.save(player);
+        auditLogService.writeAuditLog(player, AuditOperation.UPDATE, player.getId(), "player");
+
         Game game = new Game(player, LocalDateTime.now(), betSize, choice, playResponseDto.getCardDrawn(), betSize * 2, playResponseDto.getGameResult());
         gameRepository.save(game);
+        auditLogService.writeAuditLog(player, AuditOperation.INSERT, game.getId(), "game");
+
         return playResponseDto;
     }
 

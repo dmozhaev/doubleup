@@ -29,6 +29,8 @@ public class AuditLog {
 
     private UUID recordId;
 
+    private String targetTable;
+
     private LocalDateTime createdAt;
 
     @Enumerated(EnumType.STRING)
@@ -37,9 +39,10 @@ public class AuditLog {
     public AuditLog() {
     }
 
-    public AuditLog(Player player, UUID recordId, LocalDateTime createdAt, AuditOperation operation) {
+    public AuditLog(Player player, UUID recordId, String targetTable, LocalDateTime createdAt, AuditOperation operation) {
         this.player = player;
         this.recordId = recordId;
+        this.targetTable = targetTable;
         this.createdAt = createdAt;
         this.operation = operation;
     }
@@ -66,6 +69,14 @@ public class AuditLog {
 
     public void setRecordId(UUID recordId) {
         this.recordId = recordId;
+    }
+
+    public String getTargetTable() {
+        return targetTable;
+    }
+
+    public void setTargetTable(String targetTable) {
+        this.targetTable = targetTable;
     }
 
     public LocalDateTime getCreatedAt() {

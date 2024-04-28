@@ -18,8 +18,8 @@ public class AuditLogService {
     private AuditLogRepository auditLogRepository;
 
     @Transactional
-    public void writeAuditLog(Player player, AuditOperation operation, UUID recordId) {
-        AuditLog auditLog = new AuditLog(player, recordId, LocalDateTime.now(), operation);
+    public void writeAuditLog(Player player, AuditOperation operation, UUID recordId, String targetTable) {
+        AuditLog auditLog = new AuditLog(player, recordId, targetTable, LocalDateTime.now(), operation);
         auditLogRepository.save(auditLog);
     }
 }

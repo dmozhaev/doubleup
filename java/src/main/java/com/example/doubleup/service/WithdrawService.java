@@ -2,6 +2,7 @@ package com.example.doubleup.service;
 
 import com.example.doubleup.dao.PlayerRepository;
 import com.example.doubleup.dao.WithdrawalRepository;
+import com.example.doubleup.enums.AuditOperation;
 import com.example.doubleup.model.Player;
 import com.example.doubleup.model.Withdrawal;
 import jakarta.transaction.Transactional;
@@ -19,14 +20,19 @@ public class WithdrawService {
     @Autowired
     private WithdrawalRepository withdrawalRepository;
 
+    @Autowired
+    private AuditLogService auditLogService;
+
     @Transactional
     public String withdraw(Player player) {
         Withdrawal withdrawal = new Withdrawal(player, LocalDateTime.now(), player.getMoneyInPlay());
-        withdrawalRepository.save(withdrawal);
+        withdrawal = withdrawalRepository.save(withdrawal);
+        auditLogService.writeAuditLog(player, AuditOperation.INSERT, withdrawal.getId(), "withdrawal");
 
         player.setAccountBalance(player.getAccountBalance() + player.getMoneyInPlay());
         player.setMoneyInPlay(0L);
-        playerRepository.save(player);
+        player = playerRepository.save(player);
+        auditLogService.writeAuditLog(player, AuditOperation.UPDATE, player.getId(), "player");
 
         return "OK";
     }
