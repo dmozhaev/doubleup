@@ -1,10 +1,12 @@
 package com.example.doubleup.controller;
 
-import com.example.doubleup.dao.PlayerRepository;
 import com.example.doubleup.dto.WithdrawRequestDto;
 import com.example.doubleup.model.Player;
+import com.example.doubleup.service.AccessLogService;
+import com.example.doubleup.service.PlayService;
 import com.example.doubleup.service.WithdrawService;
 import com.example.doubleup.validation.WithdrawValidator;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -18,20 +20,20 @@ import java.util.Optional;
 public class WithdrawController {
 
     @Autowired
-    private PlayerRepository playerRepository;
+    private PlayService playService;
 
     @Autowired
     private WithdrawService withdrawService;
 
+    @Autowired
+    private AccessLogService accessLogService;
+
     @PostMapping("/withdrawmoney")
-    public String withdraw(@RequestBody WithdrawRequestDto requestBody) throws Exception {
+    public String withdraw(HttpServletRequest request,  @RequestBody WithdrawRequestDto requestBody) throws Exception {
+        accessLogService.writeAccessLog(request.getRemoteAddr(), "/withdraw/withdrawmoney");
 
         // player should exist in DB
-        Optional<Player> playerOptional = playerRepository.findById(requestBody.getPlayerId());
-        if (playerOptional.isEmpty()) {
-            throw new Exception("Player id: " + requestBody.getPlayerId() + " not found!");
-        }
-        Player player = playerOptional.get();
+        Player player = playService.getPlayer(requestBody.getPlayerId());
 
         // validate request dto
         WithdrawValidator.validateWithdrawRequest(requestBody, player);

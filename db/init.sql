@@ -21,7 +21,7 @@ CREATE TABLE player (
 CREATE TABLE game (
     id UUID PRIMARY KEY,
 	player_id UUID NOT NULL,
-	created_at TIMESTAMP DEFAULT now(),
+	created_at TIMESTAMP NOT NULL,
 	bet_size BIGINT NOT NULL,
 	player_choice VARCHAR(100) NOT NULL,
 	card_drawn SMALLINT NOT NULL,
@@ -30,16 +30,38 @@ CREATE TABLE game (
 	FOREIGN KEY (player_id) REFERENCES player (id),
 	CONSTRAINT chk_bet_size_non_negative CHECK (bet_size >= 0),
 	CONSTRAINT chk_card_drawn_between CHECK (card_drawn BETWEEN 1 AND 13),
-	CONSTRAINT chk_potential_profit_non_negative CHECK (potential_profit >= 0)
+	CONSTRAINT chk_potential_profit_non_negative CHECK (potential_profit >= 0),
+	CONSTRAINT chk_player_choice CHECK (player_choice IN ('SMALL', 'LARGE')),
+	CONSTRAINT chk_game_result CHECK (game_result IN ('W', 'L'))
 );
 
 CREATE TABLE withdrawal (
     id UUID PRIMARY KEY,
 	player_id UUID NOT NULL,
-	created_at TIMESTAMP DEFAULT now(),
+	created_at TIMESTAMP NOT NULL,
 	amount BIGINT NOT NULL,
 	FOREIGN KEY (player_id) REFERENCES player (id),
 	CONSTRAINT chk_amount_positive CHECK (amount > 0)
+);
+
+CREATE TABLE access_log (
+    id UUID PRIMARY KEY,
+	created_at TIMESTAMP NOT NULL,
+	ip_address VARCHAR(100) NOT NULL,
+	api VARCHAR(100)
+);
+
+CREATE TABLE audit_log (
+    id UUID PRIMARY KEY,
+	player_id UUID NOT NULL,
+	record_id UUID NOT NULL,
+	created_at TIMESTAMP NOT NULL,
+	operation VARCHAR(100) NOT NULL,
+	FOREIGN KEY (player_id) REFERENCES player (id),
+	FOREIGN KEY (record_id) REFERENCES player (id),
+	FOREIGN KEY (record_id) REFERENCES game (id),
+	FOREIGN KEY (record_id) REFERENCES withdrawal (id),
+	CONSTRAINT chk_operation CHECK (operation IN ('SELECT', 'INSERT', 'UPDATE'))
 );
 
 -- indexes for potentially frequently used queries 
@@ -55,6 +77,8 @@ INSERT INTO player (id, name, money_in_play, account_balance) VALUES
 (uuid_generate_v4(), 'gambler', 0, 100);
 
 -- grant privileges to the user
-GRANT SELECT, INSERT, UPDATE, DELETE ON TABLE player TO doubleup;
-GRANT SELECT, INSERT, UPDATE, DELETE ON TABLE game TO doubleup;
-GRANT SELECT, INSERT, UPDATE, DELETE ON TABLE withdrawal TO doubleup;
+GRANT SELECT, UPDATE ON TABLE player TO doubleup;
+GRANT SELECT, INSERT, UPDATE ON TABLE game TO doubleup;
+GRANT SELECT, INSERT, UPDATE ON TABLE withdrawal TO doubleup;
+GRANT SELECT, INSERT, UPDATE ON TABLE access_log TO doubleup;
+GRANT SELECT, INSERT, UPDATE ON TABLE audit_log TO doubleup;

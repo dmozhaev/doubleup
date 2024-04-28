@@ -1,40 +1,35 @@
 package com.example.doubleup.controller;
 
-import com.example.doubleup.dao.PlayerRepository;
 import com.example.doubleup.dto.PlayContinueRequestDto;
 import com.example.doubleup.dto.PlayResponseDto;
 import com.example.doubleup.dto.PlayStartRequestDto;
-import com.example.doubleup.enums.GameResult;
 import com.example.doubleup.model.Player;
+import com.example.doubleup.service.AccessLogService;
 import com.example.doubleup.service.PlayService;
 import com.example.doubleup.validation.PlayValidator;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.Optional;
-
 @RestController
 @RequestMapping("/play")
 public class PlayController {
 
     @Autowired
-    private PlayerRepository playerRepository;
-
-    @Autowired
     private PlayService playService;
 
+    @Autowired
+    private AccessLogService accessLogService;
+
     @PostMapping("/start")
-    public PlayResponseDto playStart(@RequestBody PlayStartRequestDto requestBody) throws Exception {
+    public PlayResponseDto playStart(HttpServletRequest request, @RequestBody PlayStartRequestDto requestBody) throws Exception {
+        accessLogService.writeAccessLog(request.getRemoteAddr(), "/play/start");
 
         // player should exist in DB
-        Optional<Player> playerOptional = playerRepository.findById(requestBody.getPlayerId());
-        if (playerOptional.isEmpty()) {
-            throw new Exception("Player id: " + requestBody.getPlayerId() + " not found!");
-        }
-        Player player = playerOptional.get();
+        Player player = playService.getPlayer(requestBody.getPlayerId());
 
         // validate request dto
         PlayValidator.validateStartRequest(requestBody, player);
@@ -43,14 +38,11 @@ public class PlayController {
     }
 
     @PostMapping("/continue")
-    public PlayResponseDto playContinue(@RequestBody PlayContinueRequestDto requestBody) throws Exception {
+    public PlayResponseDto playContinue(HttpServletRequest request, @RequestBody PlayContinueRequestDto requestBody) throws Exception {
+        accessLogService.writeAccessLog(request.getRemoteAddr(), "/play/continue");
 
         // player should exist in DB
-        Optional<Player> playerOptional = playerRepository.findById(requestBody.getPlayerId());
-        if (playerOptional.isEmpty()) {
-            throw new Exception("Player id: " + requestBody.getPlayerId() + " not found!");
-        }
-        Player player = playerOptional.get();
+        Player player = playService.getPlayer(requestBody.getPlayerId());
 
         // validate request dto
         PlayValidator.validateContinueRequest(requestBody, player);

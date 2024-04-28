@@ -13,6 +13,8 @@ import org.springframework.stereotype.Service;
 
 import java.security.SecureRandom;
 import java.time.LocalDateTime;
+import java.util.Optional;
+import java.util.UUID;
 
 @Service
 public class PlayService {
@@ -22,6 +24,14 @@ public class PlayService {
 
     @Autowired
     private GameRepository gameRepository;
+
+    public Player getPlayer(UUID id) throws Exception {
+        Optional<Player> playerOptional = playerRepository.findById(id);
+        if (playerOptional.isEmpty()) {
+            throw new Exception("Player id: " + id + " not found!");
+        }
+        return playerOptional.get();
+    }
 
     private PlayResponseDto processGame(Long betSize, SmallLargeChoice playerChoice, Long accountBalance) {
         SecureRandom secureRandom = new SecureRandom();
