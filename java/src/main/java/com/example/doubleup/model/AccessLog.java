@@ -6,7 +6,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import org.hibernate.annotations.GenericGenerator;
 
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.util.UUID;
 
 @Entity
@@ -17,7 +17,7 @@ public class AccessLog {
     @GenericGenerator(name = "uuid2", strategy = "org.hibernate.id.UUIDGenerator")
     private UUID id;
 
-    private LocalDateTime createdAt;
+    private OffsetDateTime createdAt;
 
     private String ipAddress;
 
@@ -26,7 +26,7 @@ public class AccessLog {
     public AccessLog() {
     }
 
-    public AccessLog(LocalDateTime createdAt, String ipAddress, String api) {
+    public AccessLog(OffsetDateTime createdAt, String ipAddress, String api) {
         this.createdAt = createdAt;
         this.ipAddress = ipAddress;
         this.api = api;
@@ -40,11 +40,11 @@ public class AccessLog {
         this.id = id;
     }
 
-    public LocalDateTime getCreatedAt() {
+    public OffsetDateTime getCreatedAt() {
         return createdAt;
     }
 
-    public void setCreatedAt(LocalDateTime createdAt) {
+    public void setCreatedAt(OffsetDateTime createdAt) {
         this.createdAt = createdAt;
     }
 

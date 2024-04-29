@@ -21,7 +21,7 @@ CREATE TABLE player (
 CREATE TABLE game (
     id UUID PRIMARY KEY,
 	player_id UUID NOT NULL,
-	created_at TIMESTAMP NOT NULL,
+	created_at TIMESTAMP WITH TIME ZONE NOT NULL,
 	bet_size BIGINT NOT NULL,
 	player_choice VARCHAR(100) NOT NULL,
 	card_drawn SMALLINT NOT NULL,
@@ -38,7 +38,7 @@ CREATE TABLE game (
 CREATE TABLE withdrawal (
     id UUID PRIMARY KEY,
 	player_id UUID NOT NULL,
-	created_at TIMESTAMP NOT NULL,
+	created_at TIMESTAMP WITH TIME ZONE NOT NULL,
 	amount BIGINT NOT NULL,
 	FOREIGN KEY (player_id) REFERENCES player (id),
 	CONSTRAINT chk_amount_positive CHECK (amount > 0)
@@ -46,7 +46,7 @@ CREATE TABLE withdrawal (
 
 CREATE TABLE access_log (
     id UUID PRIMARY KEY,
-	created_at TIMESTAMP NOT NULL,
+	created_at TIMESTAMP WITH TIME ZONE NOT NULL,
 	ip_address VARCHAR(100) NOT NULL,
 	api VARCHAR(100)
 );
@@ -56,7 +56,7 @@ CREATE TABLE audit_log (
 	player_id UUID NOT NULL,
 	record_id UUID NOT NULL,
 	target_table VARCHAR(100) NOT NULL,
-	created_at TIMESTAMP NOT NULL,
+	created_at TIMESTAMP WITH TIME ZONE NOT NULL,
 	operation VARCHAR(100) NOT NULL,
 	FOREIGN KEY (player_id) REFERENCES player (id),
 	CONSTRAINT chk_operation CHECK (operation IN ('SELECT', 'INSERT', 'UPDATE')),

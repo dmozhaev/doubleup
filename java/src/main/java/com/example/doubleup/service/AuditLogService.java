@@ -8,7 +8,7 @@ import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.util.UUID;
 
 @Service
@@ -19,7 +19,7 @@ public class AuditLogService {
 
     @Transactional
     public void writeAuditLog(Player player, AuditOperation operation, UUID recordId, String targetTable) {
-        AuditLog auditLog = new AuditLog(player, recordId, targetTable, LocalDateTime.now(), operation);
+        AuditLog auditLog = new AuditLog(player, recordId, targetTable, OffsetDateTime.now(), operation);
         auditLogRepository.save(auditLog);
     }
 }

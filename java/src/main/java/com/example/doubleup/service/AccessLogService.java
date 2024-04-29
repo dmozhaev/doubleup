@@ -6,7 +6,7 @@ import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 
 @Service
 public class AccessLogService {
@@ -16,7 +16,7 @@ public class AccessLogService {
 
     @Transactional
     public void writeAccessLog(String ipAddress, String api) {
-        AccessLog accessLog = new AccessLog(LocalDateTime.now(), ipAddress, api);
+        AccessLog accessLog = new AccessLog(OffsetDateTime.now(), ipAddress, api);
         accessLogRepository.save(accessLog);
     }
 }

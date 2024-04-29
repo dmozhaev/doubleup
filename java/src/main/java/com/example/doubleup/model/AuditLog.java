@@ -12,7 +12,7 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import org.hibernate.annotations.GenericGenerator;
 
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.util.UUID;
 
 @Entity
@@ -31,7 +31,7 @@ public class AuditLog {
 
     private String targetTable;
 
-    private LocalDateTime createdAt;
+    private OffsetDateTime createdAt;
 
     @Enumerated(EnumType.STRING)
     private AuditOperation operation;
@@ -39,7 +39,7 @@ public class AuditLog {
     public AuditLog() {
     }
 
-    public AuditLog(Player player, UUID recordId, String targetTable, LocalDateTime createdAt, AuditOperation operation) {
+    public AuditLog(Player player, UUID recordId, String targetTable, OffsetDateTime createdAt, AuditOperation operation) {
         this.player = player;
         this.recordId = recordId;
         this.targetTable = targetTable;
@@ -79,11 +79,11 @@ public class AuditLog {
         this.targetTable = targetTable;
     }
 
-    public LocalDateTime getCreatedAt() {
+    public OffsetDateTime getCreatedAt() {
         return createdAt;
     }
 
-    public void setCreatedAt(LocalDateTime createdAt) {
+    public void setCreatedAt(OffsetDateTime createdAt) {
         this.createdAt = createdAt;
     }
 

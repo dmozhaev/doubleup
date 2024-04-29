@@ -9,7 +9,7 @@ import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 
 @Service
 public class WithdrawService {
@@ -25,7 +25,7 @@ public class WithdrawService {
 
     @Transactional
     public String withdraw(Player player) {
-        Withdrawal withdrawal = new Withdrawal(player, LocalDateTime.now(), player.getMoneyInPlay());
+        Withdrawal withdrawal = new Withdrawal(player, OffsetDateTime.now(), player.getMoneyInPlay());
         withdrawal = withdrawalRepository.save(withdrawal);
         auditLogService.writeAuditLog(player, AuditOperation.INSERT, withdrawal.getId(), "withdrawal");
 

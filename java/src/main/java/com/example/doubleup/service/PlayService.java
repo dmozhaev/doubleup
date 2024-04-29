@@ -13,7 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.security.SecureRandom;
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -69,7 +69,7 @@ public class PlayService {
         playerRepository.save(player);
         auditLogService.writeAuditLog(player, AuditOperation.UPDATE, player.getId(), "player");
 
-        Game game = new Game(player, LocalDateTime.now(), betSize, choice, playResponseDto.getCardDrawn(), betSize * 2, playResponseDto.getGameResult());
+        Game game = new Game(player, OffsetDateTime.now(), betSize, choice, playResponseDto.getCardDrawn(), betSize * 2, playResponseDto.getGameResult());
         gameRepository.save(game);
         auditLogService.writeAuditLog(player, AuditOperation.INSERT, game.getId(), "game");
 

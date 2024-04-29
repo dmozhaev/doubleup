@@ -9,7 +9,7 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import org.hibernate.annotations.GenericGenerator;
 
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.util.UUID;
 
 @Entity
@@ -24,14 +24,14 @@ public class Withdrawal {
     @JoinColumn(name = "player_id")
     private Player player;
 
-    private LocalDateTime createdAt;
+    private OffsetDateTime createdAt;
 
     private Long amount;
 
     public Withdrawal() {
     }
 
-    public Withdrawal(Player player, LocalDateTime createdAt, Long amount) {
+    public Withdrawal(Player player, OffsetDateTime createdAt, Long amount) {
         this.player = player;
         this.createdAt = createdAt;
         this.amount = amount;
@@ -53,11 +53,11 @@ public class Withdrawal {
         this.player = player;
     }
 
-    public LocalDateTime getCreatedAt() {
+    public OffsetDateTime getCreatedAt() {
         return createdAt;
     }
 
-    public void setCreatedAt(LocalDateTime createdAt) {
+    public void setCreatedAt(OffsetDateTime createdAt) {
         this.createdAt = createdAt;
     }
 

@@ -13,7 +13,7 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import org.hibernate.annotations.GenericGenerator;
 
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.util.UUID;
 
 @Entity
@@ -28,7 +28,7 @@ public class Game {
     @JoinColumn(name = "player_id")
     private Player player;
 
-    private LocalDateTime createdAt;
+    private OffsetDateTime createdAt;
 
     private Long betSize;
 
@@ -45,7 +45,7 @@ public class Game {
     public Game() {
     }
 
-    public Game(Player player, LocalDateTime createdAt, Long betSize, SmallLargeChoice playerChoice, Short cardDrawn, Long potentialProfit, GameResult gameResult) {
+    public Game(Player player, OffsetDateTime createdAt, Long betSize, SmallLargeChoice playerChoice, Short cardDrawn, Long potentialProfit, GameResult gameResult) {
         this.player = player;
         this.createdAt = createdAt;
         this.betSize = betSize;
@@ -71,11 +71,11 @@ public class Game {
         this.player = player;
     }
 
-    public LocalDateTime getCreatedAt() {
+    public OffsetDateTime getCreatedAt() {
         return createdAt;
     }
 
-    public void setCreatedAt(LocalDateTime createdAt) {
+    public void setCreatedAt(OffsetDateTime createdAt) {
         this.createdAt = createdAt;
     }
 
