@@ -13,8 +13,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.Optional;
-
 @RestController
 @RequestMapping("/withdraw")
 public class WithdrawController {
@@ -30,7 +28,7 @@ public class WithdrawController {
 
     @PostMapping("/withdrawmoney")
     public String withdraw(HttpServletRequest request,  @RequestBody WithdrawRequestDto requestBody) throws Exception {
-        accessLogService.writeAccessLog(request.getRemoteAddr(), "/withdraw/withdrawmoney");
+        accessLogService.checkAccessAllowed(request.getRemoteAddr(), "/withdraw/withdrawmoney");
 
         // player should exist in DB
         Player player = playService.getPlayer(requestBody.getPlayerId());

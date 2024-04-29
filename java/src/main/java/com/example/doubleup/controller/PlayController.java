@@ -26,7 +26,7 @@ public class PlayController {
 
     @PostMapping("/start")
     public PlayResponseDto playStart(HttpServletRequest request, @RequestBody PlayStartRequestDto requestBody) throws Exception {
-        accessLogService.writeAccessLog(request.getRemoteAddr(), "/play/start");
+        accessLogService.checkAccessAllowed(request.getRemoteAddr(), "/play/start");
 
         // player should exist in DB
         Player player = playService.getPlayer(requestBody.getPlayerId());
@@ -39,7 +39,7 @@ public class PlayController {
 
     @PostMapping("/continue")
     public PlayResponseDto playContinue(HttpServletRequest request, @RequestBody PlayContinueRequestDto requestBody) throws Exception {
-        accessLogService.writeAccessLog(request.getRemoteAddr(), "/play/continue");
+        accessLogService.checkAccessAllowed(request.getRemoteAddr(), "/play/continue");
 
         // player should exist in DB
         Player player = playService.getPlayer(requestBody.getPlayerId());
