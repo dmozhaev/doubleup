@@ -38,7 +38,7 @@ func PlayStartHandler(db *sql.DB, w http.ResponseWriter, r *http.Request) {
     // player should exist in DB
     player, err := service.GetPlayer(db, requestDto.PlayerID)
     if err != nil {
-        fmt.Println("PlayerRepository.FindById: ", err)
+        fmt.Println("PlayerRepository.FindPlayerById: ", err)
         errorResponse := ErrorResponse{Error: err.Error()}
         w.Header().Set("Content-Type", "application/json")
         w.WriteHeader(http.StatusInternalServerError)
@@ -76,7 +76,7 @@ func PlayStartHandler(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 func PlayContinueHandler(db *sql.DB, w http.ResponseWriter, r *http.Request) {
     // check if the request method is POST
     if r.Method != http.MethodPost {
-        errorResponse := ErrorResponse{Error: "PlayStartHandler: Method not allowed"}
+        errorResponse := ErrorResponse{Error: "PlayContinueHandler: Method not allowed"}
         w.Header().Set("Content-Type", "application/json")
         w.WriteHeader(http.StatusInternalServerError)
         json.NewEncoder(w).Encode(errorResponse)
@@ -86,7 +86,7 @@ func PlayContinueHandler(db *sql.DB, w http.ResponseWriter, r *http.Request) {
     // deserialize the JSON request body into PlayContinueRequestDto object
     var requestDto dto.PlayContinueRequestDto
     if err := json.NewDecoder(r.Body).Decode(&requestDto); err != nil {
-        fmt.Println("PlayStartHandler: dto is of incorrect format")
+        fmt.Println("PlayContinueHandler: dto is of incorrect format")
         errorResponse := ErrorResponse{Error: err.Error()}
         w.Header().Set("Content-Type", "application/json")
         w.WriteHeader(http.StatusInternalServerError)
@@ -97,7 +97,7 @@ func PlayContinueHandler(db *sql.DB, w http.ResponseWriter, r *http.Request) {
     // player should exist in DB
     player, err := service.GetPlayer(db, requestDto.PlayerID)
     if err != nil {
-        fmt.Println("PlayerRepository.FindById: ", err)
+        fmt.Println("PlayerRepository.FindPlayerById: ", err)
         errorResponse := ErrorResponse{Error: err.Error()}
         w.Header().Set("Content-Type", "application/json")
         w.WriteHeader(http.StatusInternalServerError)
