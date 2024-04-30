@@ -13,7 +13,7 @@ import (
 
 func GetPlayer(db *sql.DB, id uuid.UUID) (*model.Player, error) {
     player, err := dao.FindPlayerById(db, id)
-    WriteAccessLog(db, player, enums.Select, player.ID, "player")
+    WriteAuditLog(db, player, enums.Select, player.ID, "player")
     return player, err
 }
 
@@ -55,9 +55,9 @@ func PlayGame(db *sql.DB, player *model.Player, betSize int64, choice enums.Smal
     playResponseDto := ProcessGame(db, betSize, choice, player.AccountBalance)
     player.MoneyInPlay = playResponseDto.MoneyInPlay
     dao.UpdatePlayer(db, player)
+    WriteAuditLog(db, player, enums.Update, player.ID, "player")
 
-
-
+    //WriteAuditLog(db, player, enums.Insert, game.ID, "game")
 
     return playResponseDto, nil
 }
