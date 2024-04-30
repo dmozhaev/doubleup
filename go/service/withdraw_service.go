@@ -8,9 +8,9 @@ import (
 )
 
 func Withdraw(db *sql.DB, player *model.Player) (string, error) {
-
-
-    //WriteAuditLog(db, player, enums.Insert, withdrawal.ID, "withdrawal")
+    withdrawal := model.NewWithdrawal(player.ID, player.MoneyInPlay)
+    dao.CreateWithdrawal(db, withdrawal)
+    WriteAuditLog(db, player, enums.Insert, withdrawal.ID, "withdrawal")
 
     player.AccountBalance += player.MoneyInPlay
     player.MoneyInPlay = 0

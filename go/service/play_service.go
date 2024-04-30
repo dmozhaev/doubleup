@@ -57,7 +57,9 @@ func PlayGame(db *sql.DB, player *model.Player, betSize int64, choice enums.Smal
     dao.UpdatePlayer(db, player)
     WriteAuditLog(db, player, enums.Update, player.ID, "player")
 
-    //WriteAuditLog(db, player, enums.Insert, game.ID, "game")
+    game := model.NewGame(player.ID, betSize, choice, playResponseDto.CardDrawn, betSize * 2, playResponseDto.GameResult)
+    dao.CreateGame(db, game)
+    WriteAuditLog(db, player, enums.Insert, game.ID, "game")
 
     return playResponseDto, nil
 }
