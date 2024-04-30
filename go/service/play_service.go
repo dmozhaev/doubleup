@@ -12,7 +12,9 @@ import (
 )
 
 func GetPlayer(db *sql.DB, id uuid.UUID) (*model.Player, error) {
-    return dao.FindPlayerById(db, id)
+    player, err := dao.FindPlayerById(db, id)
+    WriteAccessLog(db, player, enums.Select, player.ID, "player")
+    return player, err
 }
 
 func ProcessGame(db *sql.DB, betSize int64, playerChoice enums.SmallLargeChoice, accountBalance int64) *dto.PlayResponseDto {
