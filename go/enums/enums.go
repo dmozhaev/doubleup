@@ -10,15 +10,14 @@ const (
 type GameResult string
 
 const (
-    Win  GameResult = "WIN"
-    Lose GameResult = "LOSE"
-    Draw GameResult = "DRAW"
+    W  GameResult = "W"
+    L GameResult = "L"
 )
 
 type AuditOperation string
 
 const (
-	Create AuditOperation = "CREATE"
+	Select AuditOperation = "SELECT"
+	Insert AuditOperation = "INSERT"
 	Update AuditOperation = "UPDATE"
-	Delete AuditOperation = "DELETE"
 )

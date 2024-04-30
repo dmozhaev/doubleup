@@ -7,10 +7,11 @@ import (
     "database/sql"
     "double_up/service"
     "double_up/dto"
+    "double_up/validation"
 )
 
-type PlayResponse struct {
-    CardDrawn int `json:"cardDrawn"`
+type ErrorResponse struct {
+    Error string `json:"error"`
 }
 
 func PlayStartHandler(db *sql.DB, w http.ResponseWriter, r *http.Request) {
@@ -33,29 +34,28 @@ func PlayStartHandler(db *sql.DB, w http.ResponseWriter, r *http.Request) {
         fmt.Println("Player with ID: %s no found in DB!", err)
         return
     }
-fmt.Println("AccountBalance:", player.AccountBalance)
 
+    // validate request dto
+    dtoErr := validation.ValidateStartRequest(requestDto, player)
+	if dtoErr != nil {
+		fmt.Println("ValidateStartRequest errors: ", dtoErr)
+		errorResponse := ErrorResponse{Error: dtoErr.Error()}
 
+		// encode the error response as JSON
+        w.Header().Set("Content-Type", "application/json")
+        w.WriteHeader(http.StatusInternalServerError)
+        json.NewEncoder(w).Encode(errorResponse)
+		return
+	}
 
-    // Print playerId and betSize to the console
-    fmt.Println("Player ID:", requestDto.PlayerID)
-    fmt.Println("Bet Size:", requestDto.BetSize)
-
-    // Dummy logic: Generate a random number as the card drawn
-    cardDrawn := 42 // Replace with your actual logic
-
-
-
-
-
-    // Create a PlayResponse object
-    response := PlayResponse{
-        CardDrawn: cardDrawn,
+    // start game logic
+    responseDto, err := service.StartGame(db, player, requestDto.BetSize, requestDto.Choice)
+    if err != nil {
+        fmt.Println("Error in StartGame: %s", err)
+        return
     }
 
-    // Set Content-Type header to application/json
+    // api OK response
     w.Header().Set("Content-Type", "application/json")
-
-    // Encode the response object to JSON and send it in the response body
-    json.NewEncoder(w).Encode(response)
+    json.NewEncoder(w).Encode(responseDto)
 }
