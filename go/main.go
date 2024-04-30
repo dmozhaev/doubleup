@@ -20,6 +20,9 @@ func main() {
     http.HandleFunc("/play/start", func(w http.ResponseWriter, r *http.Request) {
         controller.PlayStartHandler(db, w, r)
     })
+    http.HandleFunc("/play/continue", func(w http.ResponseWriter, r *http.Request) {
+        controller.PlayContinueHandler(db, w, r)
+    })
 
     fmt.Println("Server listening on port 8080...")
     http.ListenAndServe(":8080", nil)

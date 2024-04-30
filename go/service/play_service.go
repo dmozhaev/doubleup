@@ -64,3 +64,7 @@ func StartGame(db *sql.DB, player *model.Player, betSize int64, choice enums.Sma
     player.AccountBalance -= betSize
     return PlayGame(db, player, betSize, choice)
 }
+
+func ContinueGame(db *sql.DB, player *model.Player, betSize int64, choice enums.SmallLargeChoice) (*dto.PlayResponseDto, error) {
+    return PlayGame(db, player, betSize, choice)
+}

@@ -10,17 +10,32 @@ import (
 func ValidateStartRequest(requestDto dto.PlayStartRequestDto, player *model.Player) error {
 	var dtoErrors []string
 
-	// There should be no money in play in order to start
+	// there should be no money in play in order to start
 	if player.MoneyInPlay != 0 {
 		dtoErrors = append(dtoErrors, "PlayValidator: there should be no money in play in order to start!")
 	}
 
-	// Validate bet size
+	// validate bet size
 	if requestDto.BetSize <= 0 {
 		dtoErrors = append(dtoErrors, "PlayValidator: bet is too small")
 	}
 	if requestDto.BetSize > player.AccountBalance {
 		dtoErrors = append(dtoErrors, "PlayValidator: bet is too large, insufficient funds")
+	}
+
+	if len(dtoErrors) > 0 {
+		return errors.New(strings.Join(dtoErrors, ", "))
+	}
+
+	return nil
+}
+
+func ValidateContinueRequest(requestDto dto.PlayContinueRequestDto, player *model.Player) error {
+	var dtoErrors []string
+
+	// money should be in play already
+	if player.MoneyInPlay == 0 {
+		dtoErrors = append(dtoErrors, "PlayValidator: money should be in play already!")
 	}
 
 	if len(dtoErrors) > 0 {
