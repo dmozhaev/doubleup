@@ -20,7 +20,6 @@ func CheckAccess(db *sql.DB, ipAddress string) error {
     if err != nil {
         return err
     }
-    fmt.Println("asdasdasd: ", apiCountLastMinute)
     if apiCountLastMinute > utils.RequestLimitPerMinute {
 		return fmt.Errorf("Too many requests! IP address: %s", ipAddress)
 	}
