@@ -17,11 +17,9 @@ func GetPlayer(db *sql.DB, id uuid.UUID) (*model.Player, error) {
     return player, err
 }
 
-func ProcessGame(db *sql.DB, betSize int64, playerChoice enums.SmallLargeChoice, accountBalance int64) *dto.PlayResponseDto {
-    rand.Seed(time.Now().UnixNano())
-    randomNumber := rand.Intn(13) + 1
+func ProcessGame(randomNumber int, betSize int64, playerChoice enums.SmallLargeChoice, accountBalance int64) *dto.PlayResponseDto {
 
-    // generate a random number to ensure cryptographic-strength randomness
+	// decide the small / large choice based on number generated
 	var gameChoice enums.SmallLargeChoice
 	if randomNumber <= 6 {
 		gameChoice = enums.Small
@@ -51,8 +49,15 @@ func ProcessGame(db *sql.DB, betSize int64, playerChoice enums.SmallLargeChoice,
 	}
 }
 
+func GenerateNumberAndProcessGame(betSize int64, playerChoice enums.SmallLargeChoice, accountBalance int64) *dto.PlayResponseDto {
+    // generate a random number to ensure cryptographic-strength randomness
+    rand.Seed(time.Now().UnixNano())
+    randomNumber := rand.Intn(13) + 1
+	return ProcessGame(randomNumber, betSize, playerChoice, accountBalance)
+}
+
 func PlayGame(db *sql.DB, player *model.Player, betSize int64, choice enums.SmallLargeChoice) (*dto.PlayResponseDto, error) {
-    playResponseDto := ProcessGame(db, betSize, choice, player.AccountBalance)
+    playResponseDto := GenerateNumberAndProcessGame(betSize, choice, player.AccountBalance)
     player.MoneyInPlay = playResponseDto.MoneyInPlay
     dao.UpdatePlayer(db, player)
     WriteAuditLog(db, player, enums.Update, player.ID, "player")
