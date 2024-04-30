@@ -6,5 +6,5 @@ const (
     dbName = "doubleupdb"
     dbHost = "localhost"
     dbPort = 5433
-    requestLimitPerMinute = 50
+    RequestLimitPerMinute = 50
 )

@@ -31,6 +31,9 @@ func WithdrawHandler(db *sql.DB, w http.ResponseWriter, r *http.Request) {
         return
     }
 
+    // check rate limit
+    service.CheckAccessAllowed(db, r.RemoteAddr, "/withdraw/withdrawmoney")
+
     // player should exist in DB
     player, err := service.GetPlayer(db, requestDto.PlayerID)
     if err != nil {

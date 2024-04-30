@@ -12,7 +12,7 @@ type AccessLog struct {
 	Api       string
 }
 
-func NewAccessLog(ipAddress, api string) *AccessLog {
+func NewAccessLog(ipAddress string, api string) *AccessLog {
 	return &AccessLog{
 		ID:        uuid.New(),
 		CreatedAt: time.Now().UTC(),

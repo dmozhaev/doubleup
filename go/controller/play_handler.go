@@ -35,6 +35,9 @@ func PlayStartHandler(db *sql.DB, w http.ResponseWriter, r *http.Request) {
         return
     }
 
+    // check rate limit
+    service.CheckAccessAllowed(db, r.RemoteAddr, "/play/start")
+
     // player should exist in DB
     player, err := service.GetPlayer(db, requestDto.PlayerID)
     if err != nil {
@@ -93,6 +96,9 @@ func PlayContinueHandler(db *sql.DB, w http.ResponseWriter, r *http.Request) {
         json.NewEncoder(w).Encode(errorResponse)
         return
     }
+
+    // check rate limit
+    service.CheckAccessAllowed(db, r.RemoteAddr, "/play/continue")
 
     // player should exist in DB
     player, err := service.GetPlayer(db, requestDto.PlayerID)
