@@ -51,6 +51,11 @@ func ProcessGame(db *sql.DB, betSize int64, playerChoice enums.SmallLargeChoice,
 
 func PlayGame(db *sql.DB, player *model.Player, betSize int64, choice enums.SmallLargeChoice) (*dto.PlayResponseDto, error) {
     playResponseDto := ProcessGame(db, betSize, choice, player.AccountBalance)
+    player.MoneyInPlay = playResponseDto.MoneyInPlay
+    dao.Save(db, player)
+
+
+
 
     return playResponseDto, nil
 }

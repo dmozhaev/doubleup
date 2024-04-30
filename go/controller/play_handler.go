@@ -17,21 +17,32 @@ type ErrorResponse struct {
 func PlayStartHandler(db *sql.DB, w http.ResponseWriter, r *http.Request) {
     // check if the request method is POST
     if r.Method != http.MethodPost {
-        http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+        errorResponse := ErrorResponse{Error: "PlayStartHandler: Method not allowed"}
+        w.Header().Set("Content-Type", "application/json")
+        w.WriteHeader(http.StatusInternalServerError)
+        json.NewEncoder(w).Encode(errorResponse)
         return
     }
 
     // decode the JSON request body into PlayStartRequestDto object
     var requestDto dto.PlayStartRequestDto
     if err := json.NewDecoder(r.Body).Decode(&requestDto); err != nil {
-        http.Error(w, err.Error(), http.StatusBadRequest)
+        fmt.Println("PlayStartHandler: dto is of incorrect format")
+        errorResponse := ErrorResponse{Error: err.Error()}
+        w.Header().Set("Content-Type", "application/json")
+        w.WriteHeader(http.StatusInternalServerError)
+        json.NewEncoder(w).Encode(errorResponse)
         return
     }
 
     // player should exist in DB
     player, err := service.GetPlayer(db, requestDto.PlayerID)
     if err != nil {
-        fmt.Println("Player with ID: %s no found in DB!", err)
+        fmt.Println("PlayerRepository.FindById: ", err)
+        errorResponse := ErrorResponse{Error: err.Error()}
+        w.Header().Set("Content-Type", "application/json")
+        w.WriteHeader(http.StatusInternalServerError)
+        json.NewEncoder(w).Encode(errorResponse)
         return
     }
 
@@ -40,8 +51,6 @@ func PlayStartHandler(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 	if dtoErr != nil {
 		fmt.Println("ValidateStartRequest errors: ", dtoErr)
 		errorResponse := ErrorResponse{Error: dtoErr.Error()}
-
-		// encode the error response as JSON
         w.Header().Set("Content-Type", "application/json")
         w.WriteHeader(http.StatusInternalServerError)
         json.NewEncoder(w).Encode(errorResponse)
@@ -49,9 +58,13 @@ func PlayStartHandler(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 	}
 
     // start game logic
-    responseDto, err := service.StartGame(db, player, requestDto.BetSize, requestDto.Choice)
+    responseDto, startGameErr := service.StartGame(db, player, requestDto.BetSize, requestDto.Choice)
     if err != nil {
-        fmt.Println("Error in StartGame: %s", err)
+        fmt.Println("Error in StartGame: ", startGameErr)
+		errorResponse := ErrorResponse{Error: startGameErr.Error()}
+        w.Header().Set("Content-Type", "application/json")
+        w.WriteHeader(http.StatusInternalServerError)
+        json.NewEncoder(w).Encode(errorResponse)
         return
     }
 

@@ -7,15 +7,6 @@ import (
     "double_up/model"
 )
 
-type PlayerRepository interface {
-    FindById(id uuid.UUID) (*model.Player, error)
-    //Save(player *Player) error
-}
-
-type PostgreSQLPlayerRepository struct {
-    DB *sql.DB
-}
-
 func FindById(db *sql.DB, id uuid.UUID) (*model.Player, error) {
     query := "SELECT id, name, money_in_play, account_balance FROM player WHERE id = $1"
     row := db.QueryRow(query, id)
@@ -24,7 +15,7 @@ func FindById(db *sql.DB, id uuid.UUID) (*model.Player, error) {
     err := row.Scan(&player.ID, &player.Name, &player.MoneyInPlay, &player.AccountBalance)
     if err != nil {
         if err == sql.ErrNoRows {
-            return nil, fmt.Errorf("player not found")
+            return nil, fmt.Errorf("Player not found, id: %s", id)
         }
         return nil, err
     }
@@ -32,6 +23,11 @@ func FindById(db *sql.DB, id uuid.UUID) (*model.Player, error) {
     return &player, nil
 }
 
-//func (r *PostgreSQLPlayerRepository) Save(player *Player) error {
-    // Implement logic to save the player to the database
-//}
+func Save(db *sql.DB, player *model.Player) (*model.Player, error) {
+    query := "UPDATE player SET money_in_play = $1, account_balance = $2 WHERE id = $3"
+    _, err := db.Exec(query, player.MoneyInPlay, player.AccountBalance, player.ID)
+    if err != nil {
+        return nil, fmt.Errorf("Player cannot be saved, id: %s. Error: %s", player.ID, err)
+    }
+    return FindById(db, player.ID)
+}
