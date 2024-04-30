@@ -10,6 +10,15 @@ import (
     "double_up/validation"
 )
 
+// PlayContinueHandler handles the HTTP request for continuing a game.
+//
+// It expects a POST request with JSON data containing the following fields:
+//   - playerId: The ID of the player starting the game in the UUID format.
+//
+// If successful, it responds with the "OK" string.
+//
+// If there's an error decoding the request body or processing the game, it
+// responds with an appropriate HTTP error status code and an error message.
 func WithdrawHandler(db *sql.DB, w http.ResponseWriter, r *http.Request) {
     // check if the request method is POST
     if r.Method != http.MethodPost {
@@ -57,7 +66,7 @@ func WithdrawHandler(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 	}
 
     // withdrawal logic
-    responseDto, withdrawErr := service.Withdraw(db, player)
+    msg, withdrawErr := service.Withdraw(db, player)
     if err != nil {
         fmt.Println("Error in WithdrawGame: ", withdrawErr)
 		errorResponse := ErrorResponse{Error: withdrawErr.Error()}
@@ -69,5 +78,5 @@ func WithdrawHandler(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 
     // api OK response
     w.Header().Set("Content-Type", "application/json")
-    json.NewEncoder(w).Encode(responseDto)
+    json.NewEncoder(w).Encode(msg)
 }

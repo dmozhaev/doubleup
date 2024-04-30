@@ -14,6 +14,21 @@ type ErrorResponse struct {
     Error string `json:"error"`
 }
 
+// PlayStartHandler handles the HTTP request for starting a game.
+//
+// It expects a POST request with JSON data containing the following fields:
+//   - playerId: The ID of the player starting the game in the UUID format.
+//   - choice: The choice made by the player (small or large card).
+//   - betSize: The size of the bet for the game.
+//
+// If successful, it responds with JSON data containing the following fields:
+//   - cardDrawn: The randomly drawn card for the game [1...13].
+//   - gameResult: The result of the game (W or L).
+//   - moneyInPlay: The amount of money in play after the game (amount of the possible win).
+//   - remainingBalance: The remaining balance of the player after the game.
+//
+// If there's an error decoding the request body or processing the game, it
+// responds with an appropriate HTTP error status code and an error message.
 func PlayStartHandler(db *sql.DB, w http.ResponseWriter, r *http.Request) {
     // check if the request method is POST
     if r.Method != http.MethodPost {
@@ -76,6 +91,20 @@ func PlayStartHandler(db *sql.DB, w http.ResponseWriter, r *http.Request) {
     json.NewEncoder(w).Encode(responseDto)
 }
 
+// PlayContinueHandler handles the HTTP request for continuing a game.
+//
+// It expects a POST request with JSON data containing the following fields:
+//   - playerId: The ID of the player starting the game in the UUID format.
+//   - choice: The choice made by the player (small or large card).
+//
+// If successful, it responds with JSON data containing the following fields:
+//   - cardDrawn: The randomly drawn card for the game [1...13].
+//   - gameResult: The result of the game (W or L).
+//   - moneyInPlay: The amount of money in play after the game (amount of the possible win).
+//   - remainingBalance: The remaining balance of the player after the game.
+//
+// If there's an error decoding the request body or processing the game, it
+// responds with an appropriate HTTP error status code and an error message.
 func PlayContinueHandler(db *sql.DB, w http.ResponseWriter, r *http.Request) {
     // check if the request method is POST
     if r.Method != http.MethodPost {
