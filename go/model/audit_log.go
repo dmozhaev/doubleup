@@ -3,6 +3,7 @@ package model
 import (
 	"time"
 	"github.com/google/uuid"
+	"double_up/enums"
 )
 
 type AuditLog struct {
@@ -11,18 +12,10 @@ type AuditLog struct {
 	RecordID    uuid.UUID
 	TargetTable string
 	CreatedAt   time.Time
-	Operation   AuditOperation
+	Operation   enums.AuditOperation
 }
 
-type AuditOperation string
-
-const (
-	Create AuditOperation = "CREATE"
-	Update AuditOperation = "UPDATE"
-	Delete AuditOperation = "DELETE"
-)
-
-func NewAuditLog(playerID, recordID uuid.UUID, targetTable string, operation AuditOperation) *AuditLog {
+func NewAuditLog(playerID, recordID uuid.UUID, targetTable string, operation enums.AuditOperation) *AuditLog {
 	return &AuditLog{
 		ID:          uuid.New(),
 		PlayerID:    playerID,
