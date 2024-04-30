@@ -24,10 +24,19 @@ func FindPlayerById(db *sql.DB, id uuid.UUID) (*model.Player, error) {
 }
 
 func UpdatePlayer(db *sql.DB, player *model.Player) (*model.Player, error) {
-    query := "UPDATE player SET money_in_play = $1, account_balance = $2 WHERE id = $3"
-    _, err := db.Exec(query, player.MoneyInPlay, player.AccountBalance, player.ID)
+	queryFunc := func(db *sql.DB, tx *sql.Tx) error {
+        query := "UPDATE player SET money_in_play = $1, account_balance = $2 WHERE id = $3"
+        _, err := db.Exec(query, player.MoneyInPlay, player.AccountBalance, player.ID)
+        if err != nil {
+            return fmt.Errorf("Player cannot be updated, id: %s. Error: %s", player.ID, err)
+        }
+        return nil
+	}
+
+    err := RunInTransaction(db, queryFunc)
     if err != nil {
-        return nil, fmt.Errorf("Player cannot be updated, id: %s. Error: %s", player.ID, err)
+        return nil, err
     }
+
     return FindPlayerById(db, player.ID)
 }

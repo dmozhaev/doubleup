@@ -8,12 +8,16 @@ import (
 )
 
 func CreateAccessLog(db *sql.DB, accessLog *model.AccessLog) error {
-    query := "INSERT INTO access_log (id, created_at, ip_address, api) VALUES ($1, $2, $3, $4)"
-    _, err := db.Exec(query, accessLog.ID, accessLog.CreatedAt, accessLog.IpAddress, accessLog.Api)
-    if err != nil {
-        return fmt.Errorf("AccessLog cannot be created, id: %s. Error: %s", accessLog.ID, err)
-    }
-    return nil
+	queryFunc := func(db *sql.DB, tx *sql.Tx) error {
+        query := "INSERT INTO access_log (id, created_at, ip_address, api) VALUES ($1, $2, $3, $4)"
+        _, err := db.Exec(query, accessLog.ID, accessLog.CreatedAt, accessLog.IpAddress, accessLog.Api)
+        if err != nil {
+            return fmt.Errorf("AccessLog cannot be created, id: %s. Error: %s", accessLog.ID, err)
+        }
+        return nil
+	}
+
+    return RunInTransaction(db, queryFunc)
 }
 
 func CountRowsForLastMinute(db *sql.DB, ipAddress string, startTime time.Time) (int16, error) {
