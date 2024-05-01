@@ -58,7 +58,7 @@ func PlayStartHandler(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 
     // start game logic
     responseDto, startGameErr := service.StartGame(db, player, requestDto.BetSize, requestDto.Choice)
-    if err != nil {
+    if startGameErr != nil {
         HandlerError(w, fmt.Sprintf("PlayStartHandler: %s", startGameErr.Error()))
         return
     }
@@ -115,7 +115,7 @@ func PlayContinueHandler(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 
     // continue game logic
     responseDto, continueGameErr := service.ContinueGame(db, player, player.MoneyInPlay, requestDto.Choice)
-    if err != nil {
+    if continueGameErr != nil {
         HandlerError(w, fmt.Sprintf("PlayContinueHandler: %s", continueGameErr.Error()))
         return
     }

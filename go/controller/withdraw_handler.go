@@ -53,7 +53,7 @@ func WithdrawHandler(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 
     // withdrawal logic
     msg, withdrawErr := service.Withdraw(db, player)
-    if err != nil {
+    if withdrawErr != nil {
         HandlerError(w, fmt.Sprintf("WithdrawHandler: %s", withdrawErr.Error()))
         return
     }

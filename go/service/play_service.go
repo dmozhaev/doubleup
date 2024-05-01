@@ -64,11 +64,19 @@ func GenerateNumberAndProcessGame(betSize int64, playerChoice enums.SmallLargeCh
 func PlayGame(db *sql.DB, player *model.Player, betSize int64, choice enums.SmallLargeChoice) (*dto.PlayResponseDto, error) {
     playResponseDto := GenerateNumberAndProcessGame(betSize, choice, player.AccountBalance)
     player.MoneyInPlay = playResponseDto.MoneyInPlay
-    dao.UpdatePlayer(db, player)
+    _, err := dao.UpdatePlayer(db, player)
+    if err != nil {
+        fmt.Println(err)
+        return nil, err
+    }
     WriteAuditLog(db, player, enums.Update, player.ID, "player")
 
     game := model.NewGame(player.ID, betSize, choice, playResponseDto.CardDrawn, betSize * 2, playResponseDto.GameResult)
-    dao.CreateGame(db, game)
+    err = dao.CreateGame(db, game)
+    if err != nil {
+        fmt.Println(err)
+        return nil, err
+    }
     WriteAuditLog(db, player, enums.Insert, game.ID, "game")
 
     return playResponseDto, nil
