@@ -1,16 +1,13 @@
 package integration
 
 import (
-    "bytes"
     "database/sql"
-    "net/http"
-    "net/http/httptest"
     "fmt"
     "strings"
     "testing"
     "github.com/stretchr/testify/assert"
-    "double_up/controller"
     "double_up/dao"
+    "double_up/integration"
     "double_up/utils"
 )
 
@@ -32,23 +29,6 @@ func setupDbPlayStart(db *sql.DB) {
     dao.RunInTransaction(db, queryFunc)
 }
 
-func sendRequestPlayStart(db *sql.DB, method string, url string, requestBody string) (*httptest.ResponseRecorder) {
-    req := httptest.NewRequest(method, url, bytes.NewBufferString(requestBody))
-
-    // Create a response recorder to record the response
-    rr := httptest.NewRecorder()
-
-    // Convert controller.PlayStartHandler to a http.HandlerFunc
-    handler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-        controller.PlayStartHandler(db, w, r)
-    })
-
-    // Serve the request using the handler and record the response
-    handler.ServeHTTP(rr, req)
-
-    return rr
-}
-
 func TestPlayStartBasic(t *testing.T) {
     // db connect
     db, err := utils.Connect()
@@ -62,7 +42,7 @@ func TestPlayStartBasic(t *testing.T) {
     setupDbPlayStart(db)
 
     // GET not allowed
-    rr := sendRequestPlayStart(db, "GET", "/play/start", `{
+    rr := integration.SendRequestPlayStart(db, "GET", `{
         "PlayerID": "01162f1f-0bd9-43fe-8032-fa9590ee0e7e",
         "BetSize": 10,
         "Choice": "SMALL"
@@ -71,7 +51,7 @@ func TestPlayStartBasic(t *testing.T) {
     assert.Equal(t, `{"error":"PlayStartHandler: Method not allowed"}`, strings.TrimSpace(rr.Body.String()))
 
     // PUT not allowed
-    rr = sendRequestPlayStart(db, "PUT", "/play/start", `{
+    rr = integration.SendRequestPlayStart(db, "PUT", `{
         "PlayerID": "01162f1f-0bd9-43fe-8032-fa9590ee0e7e",
         "BetSize": 10,
         "Choice": "SMALL"
@@ -80,7 +60,7 @@ func TestPlayStartBasic(t *testing.T) {
     assert.Equal(t, `{"error":"PlayStartHandler: Method not allowed"}`, strings.TrimSpace(rr.Body.String()))
 
     // invalid PlayerID
-    rr = sendRequestPlayStart(db, "POST", "/play/start", `{
+    rr = integration.SendRequestPlayStart(db, "POST", `{
         "PlayerID": "asdasdadad",
         "BetSize": 10,
         "Choice": "SMALL"
@@ -89,7 +69,7 @@ func TestPlayStartBasic(t *testing.T) {
     assert.Equal(t, `{"error":"PlayStartHandler: invalid UUID length: 10"}`, strings.TrimSpace(rr.Body.String()))
 
     // missing PlayerID
-    rr = sendRequestPlayStart(db, "POST", "/play/start", `{
+    rr = integration.SendRequestPlayStart(db, "POST", `{
         "BetSize": 10,
         "Choice": "SMALL"
     }`)
@@ -97,7 +77,7 @@ func TestPlayStartBasic(t *testing.T) {
     assert.Equal(t, `{"error":"PlayStartHandler: Player not found, id: 00000000-0000-0000-0000-000000000000"}`, strings.TrimSpace(rr.Body.String()))
 
     // player does not exist in DB
-    rr = sendRequestPlayStart(db, "POST", "/play/start", `{
+    rr = integration.SendRequestPlayStart(db, "POST", `{
         "PlayerID": "9ff66fec-17c4-4594-aa03-d053fc036bad",
         "BetSize": 10,
         "Choice": "SMALL"
@@ -106,7 +86,7 @@ func TestPlayStartBasic(t *testing.T) {
     assert.Equal(t, `{"error":"PlayStartHandler: Player not found, id: 9ff66fec-17c4-4594-aa03-d053fc036bad"}`, strings.TrimSpace(rr.Body.String()))
 
     // invalid BetSize
-    rr = sendRequestPlayStart(db, "POST", "/play/start", `{
+    rr = integration.SendRequestPlayStart(db, "POST", `{
         "PlayerID": "01162f1f-0bd9-43fe-8032-fa9590ee0e7e",
         "BetSize": "some string",
         "Choice": "SMALL"
@@ -115,7 +95,7 @@ func TestPlayStartBasic(t *testing.T) {
     assert.Equal(t, `{"error":"PlayStartHandler: json: cannot unmarshal string into Go struct field PlayStartRequestDto.BetSize of type int64"}`, strings.TrimSpace(rr.Body.String()))
 
     // invalid Choice
-    rr = sendRequestPlayStart(db, "POST", "/play/start", `{
+    rr = integration.SendRequestPlayStart(db, "POST", `{
         "PlayerID": "01162f1f-0bd9-43fe-8032-fa9590ee0e7e",
         "BetSize": 10,
         "Choice": "IDONTKNOW"
