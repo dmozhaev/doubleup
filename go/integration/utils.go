@@ -3,9 +3,12 @@ package integration
 import (
     "bytes"
     "database/sql"
+    "io/ioutil"
+    "encoding/json"
     "net/http"
     "net/http/httptest"
     "double_up/controller"
+    "double_up/dto"
 )
 
 func sendRequest(db *sql.DB, method string, url string, requestBody string, handlerFunc func(dbParam *sql.DB, wParam http.ResponseWriter, rParam *http.Request)) (*httptest.ResponseRecorder) {
@@ -35,4 +38,11 @@ func SendRequestPlayContinue(db *sql.DB, method string, requestBody string) (*ht
 
 func SendRequestWithdraw(db *sql.DB, method string, requestBody string) (*httptest.ResponseRecorder) {
     return sendRequest(db, method, "/withdraw/withdrawmoney", requestBody, controller.WithdrawHandler)
+}
+
+func DeserializePlayResponse(rr *httptest.ResponseRecorder) (dto.PlayResponseDto) {
+    body, _ := ioutil.ReadAll(rr.Body)
+    var data dto.PlayResponseDto
+    json.Unmarshal(body, &data)
+    return data
 }
