@@ -104,4 +104,22 @@ func TestPlayStartBasic(t *testing.T) {
     }`)
     assert.Equal(t, 500, rr.Code)
     assert.Equal(t, `{"error":"PlayStartHandler: Player not found, id: 9ff66fec-17c4-4594-aa03-d053fc036bad"}`, strings.TrimSpace(rr.Body.String()))
+
+    // invalid BetSize
+    rr = sendRequestPlayStart(db, "POST", "/play/start", `{
+        "PlayerID": "01162f1f-0bd9-43fe-8032-fa9590ee0e7e",
+        "BetSize": "some string",
+        "Choice": "SMALL"
+    }`)
+    assert.Equal(t, 500, rr.Code)
+    assert.Equal(t, `{"error":"PlayStartHandler: json: cannot unmarshal string into Go struct field PlayStartRequestDto.BetSize of type int64"}`, strings.TrimSpace(rr.Body.String()))
+
+    // invalid Choice
+    rr = sendRequestPlayStart(db, "POST", "/play/start", `{
+        "PlayerID": "01162f1f-0bd9-43fe-8032-fa9590ee0e7e",
+        "BetSize": 10,
+        "Choice": "IDONTKNOW"
+    }`)
+    assert.Equal(t, 500, rr.Code)
+    assert.Equal(t, `{"error":"PlayStartHandler: PlayValidator: choice is invalid"}`, strings.TrimSpace(rr.Body.String()))
 }

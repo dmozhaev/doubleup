@@ -99,4 +99,12 @@ func TestPlayContinueBasic(t *testing.T) {
     }`)
     assert.Equal(t, 500, rr.Code)
     assert.Equal(t, `{"error":"PlayContinueHandler: Player not found, id: 9ff66fec-17c4-4594-aa03-d053fc036bad"}`, strings.TrimSpace(rr.Body.String()))
+
+    // invalid Choice
+    rr = sendRequestPlayContinue(db, "POST", "/play/continue", `{
+        "PlayerID": "01162f1f-0bd9-43fe-8032-fa9590ee0e7e",
+        "Choice": "IDONTKNOW"
+    }`)
+    assert.Equal(t, 500, rr.Code)
+    assert.Equal(t, `{"error":"PlayContinueHandler: PlayValidator: choice is invalid"}`, strings.TrimSpace(rr.Body.String()))
 }

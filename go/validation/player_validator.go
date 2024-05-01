@@ -5,6 +5,7 @@ import (
     "strings"
     "double_up/model"
     "double_up/dto"
+    "double_up/enums"
 )
 
 func ValidateStartRequest(requestDto dto.PlayStartRequestDto, player *model.Player) error {
@@ -23,6 +24,11 @@ func ValidateStartRequest(requestDto dto.PlayStartRequestDto, player *model.Play
 		dtoErrors = append(dtoErrors, "PlayValidator: bet is too large, insufficient funds")
 	}
 
+	// invalid choice
+	if requestDto.Choice != enums.Small && requestDto.Choice != enums.Large {
+		dtoErrors = append(dtoErrors, "PlayValidator: choice is invalid")
+	}
+
 	if len(dtoErrors) > 0 {
 		return errors.New(strings.Join(dtoErrors, ", "))
 	}
@@ -36,6 +42,11 @@ func ValidateContinueRequest(requestDto dto.PlayContinueRequestDto, player *mode
 	// money should be in play already
 	if player.MoneyInPlay == 0 {
 		dtoErrors = append(dtoErrors, "PlayValidator: money should be in play already!")
+	}
+
+	// invalid choice
+	if requestDto.Choice != enums.Small && requestDto.Choice != enums.Large {
+		dtoErrors = append(dtoErrors, "PlayValidator: choice is invalid")
 	}
 
 	if len(dtoErrors) > 0 {
