@@ -5,5 +5,5 @@ import (
 )
 
 type WithdrawRequestDto struct {
-    PlayerID uuid.UUID
+    PlayerID uuid.UUID `json:"PlayerID"`
 }

@@ -2,9 +2,6 @@
 CREATE DATABASE doubleupdb;
 \c doubleupdb;
 
--- extension for generating uuid:s
-CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
-
 -- create a database user
 CREATE USER doubleup WITH PASSWORD 'doubleup';
 
@@ -72,12 +69,12 @@ CREATE INDEX idx_withdrawal_amount ON withdrawal (amount);
 
 -- insert test data (seed)
 INSERT INTO player (id, name, money_in_play, account_balance) VALUES
-(uuid_generate_v4(), 'heikki', 0, 1000),
-(uuid_generate_v4(), 'gambler', 0, 100);
+('01162f1f-0bd9-43fe-8032-fa9590ee0e7e', 'heikki', 0, 1000),
+('8c784c55-925f-4268-b905-9cfc17d3cea5', 'gambler', 0, 100);
 
 -- grant privileges to the user
 GRANT SELECT, UPDATE ON TABLE player TO doubleup;
-GRANT SELECT, INSERT, UPDATE ON TABLE game TO doubleup;
-GRANT SELECT, INSERT, UPDATE ON TABLE withdrawal TO doubleup;
-GRANT SELECT, INSERT, UPDATE ON TABLE access_log TO doubleup;
-GRANT SELECT, INSERT, UPDATE ON TABLE audit_log TO doubleup;
+GRANT SELECT, INSERT, UPDATE, DELETE ON TABLE game TO doubleup;
+GRANT SELECT, INSERT, UPDATE, DELETE ON TABLE withdrawal TO doubleup;
+GRANT SELECT, INSERT, UPDATE, DELETE ON TABLE access_log TO doubleup;
+GRANT SELECT, INSERT, UPDATE, DELETE ON TABLE audit_log TO doubleup;

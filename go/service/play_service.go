@@ -1,6 +1,7 @@
 package service
 
 import (
+    "fmt"
     "database/sql"
     "github.com/google/uuid"
     "math/rand"
@@ -13,6 +14,10 @@ import (
 
 func GetPlayer(db *sql.DB, id uuid.UUID) (*model.Player, error) {
     player, err := dao.FindPlayerById(db, id)
+    if err != nil {
+        fmt.Println(err)
+        return nil, err
+    }
     WriteAuditLog(db, player, enums.Select, player.ID, "player")
     return player, err
 }

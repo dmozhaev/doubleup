@@ -6,6 +6,6 @@ import (
 )
 
 type PlayContinueRequestDto struct {
-    PlayerID uuid.UUID
-    Choice   enums.SmallLargeChoice
+    PlayerID uuid.UUID `json:"PlayerID"`
+    Choice   enums.SmallLargeChoice `json:"Choice"`
 }
