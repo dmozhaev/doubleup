@@ -49,6 +49,8 @@ func TestProcessInitial(t *testing.T) {
     }`)
     assert.Equal(t, 500, rr.Code)
     assert.Equal(t, `{"error":"PlayContinueHandler: PlayValidator: money should be in play already!"}`, strings.TrimSpace(rr.Body.String()))
+    integration.CheckDbTableCounts(t, db, 1, 1, 0, 0)
+    integration.CheckDbPlayerTable(t, db, 0, 1000)
 
     // withdrawal not possible
     rr = integration.SendRequestWithdraw(db, "POST", `{
@@ -56,6 +58,8 @@ func TestProcessInitial(t *testing.T) {
     }`)
     assert.Equal(t, 500, rr.Code)
     assert.Equal(t, `{"error":"WithdrawHandler: WithdrawValidator: money should be in play already!"}`, strings.TrimSpace(rr.Body.String()))
+    integration.CheckDbTableCounts(t, db, 2, 2, 0, 0)
+    integration.CheckDbPlayerTable(t, db, 0, 1000)
 
     // start play is possible
     rr = integration.SendRequestPlayStart(db, "POST", `{
@@ -64,14 +68,17 @@ func TestProcessInitial(t *testing.T) {
         "Choice": "LARGE"
     }`)
     assert.Equal(t, 200, rr.Code)
+    integration.CheckDbTableCounts(t, db, 3, 5, 1, 0)
 
     resp := integration.DeserializePlayResponse(rr)
     if resp.GameResult == enums.W {
         assert.Equal(t, enums.W, resp.GameResult)
         assert.Equal(t, int(20), int(resp.MoneyInPlay))
+        integration.CheckDbPlayerTable(t, db, 20, 990)
     } else {
         assert.Equal(t, enums.L, resp.GameResult)
         assert.Equal(t, int(0), int(resp.MoneyInPlay))
+        integration.CheckDbPlayerTable(t, db, 0, 990)
     }
     assert.Equal(t, int(990), int(resp.RemainingBalance))
 }

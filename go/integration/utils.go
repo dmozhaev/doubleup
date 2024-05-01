@@ -5,9 +5,13 @@ import (
     "database/sql"
     "io/ioutil"
     "encoding/json"
+    "github.com/stretchr/testify/assert"
+    "github.com/google/uuid"
     "net/http"
     "net/http/httptest"
+    "testing"
     "double_up/controller"
+    "double_up/dao"
     "double_up/dto"
 )
 
@@ -45,4 +49,23 @@ func DeserializePlayResponse(rr *httptest.ResponseRecorder) (dto.PlayResponseDto
     var data dto.PlayResponseDto
     json.Unmarshal(body, &data)
     return data
+}
+
+func CheckDbTableCounts(t *testing.T, db *sql.DB, accessCount int, auditCount int, gameCount int, withdrawalCount int) {
+    var count int
+    db.QueryRow("SELECT count(id) FROM access_log").Scan(&count)
+    assert.Equal(t, accessCount, count)
+    db.QueryRow("SELECT count(id) FROM audit_log").Scan(&count)
+    assert.Equal(t, auditCount, count)
+    db.QueryRow("SELECT count(id) FROM game").Scan(&count)
+    assert.Equal(t, gameCount, count)
+    db.QueryRow("SELECT count(id) FROM withdrawal").Scan(&count)
+    assert.Equal(t, withdrawalCount, count)
+}
+
+func CheckDbPlayerTable(t *testing.T, db *sql.DB, moneyInPlay int, accountBalance int) {
+    playerID, _ := uuid.Parse("01162f1f-0bd9-43fe-8032-fa9590ee0e7e")
+    player, _ := dao.FindPlayerById(db, playerID)
+    assert.Equal(t, moneyInPlay, int(player.MoneyInPlay))
+    assert.Equal(t, accountBalance, int(player.AccountBalance))
 }

@@ -49,6 +49,8 @@ func TestProcessGameWonWithdraw(t *testing.T) {
     }`)
     assert.Equal(t, 500, rr.Code)
     assert.Equal(t, `{"error":"PlayStartHandler: PlayValidator: there should be no money in play in order to start!"}`, strings.TrimSpace(rr.Body.String()))
+    integration.CheckDbTableCounts(t, db, 1, 1, 0, 0)
+    integration.CheckDbPlayerTable(t, db, 20, 990)
 
     // withdrawal is possible
     rr = integration.SendRequestWithdraw(db, "POST", `{
@@ -56,4 +58,6 @@ func TestProcessGameWonWithdraw(t *testing.T) {
     }`)
     assert.Equal(t, 200, rr.Code)
     assert.Equal(t, `"OK"`, strings.TrimSpace(rr.Body.String()))
+    integration.CheckDbTableCounts(t, db, 2, 4, 0, 1)
+    integration.CheckDbPlayerTable(t, db, 0, 1010)
 }
