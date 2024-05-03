@@ -173,7 +173,7 @@ ok      double_up/validation    0.112s
 ### Integration tests
 Integration tests reside in own folder:
 ```bash
-<project root>/integration/tests
+<project root>/go/integration/tests
 ```
 The DB connection is currently the same as for the "production", there ia a hard-coded test user named `heikki` with hard-coded UUID of `01162f1f-0bd9-43fe-8032-fa9590ee0e7e`. Currently there are 6 integration tests that can be divided into 2 categories:
 
