@@ -16,13 +16,13 @@ Note: this guide is for running Go side of the project along with database.
 - `docker` version 26.0.0
 
 ### Installing Go dependencies
+Note: Optional step, dependencies will be downloaded automatically on the initial backend start.
 - Open command prompt or terminal
 - Navigate to the directory containing Go project
 ```bash
 cd <project root>/go
 ```
-- Install required dependencies  
-Note: Optional step, will be downloaded on the first backend start.
+- Install required dependencies
 ```bash
 go get -u github.com/lib/pq
 go get -u github.com/google/uuid
