@@ -21,7 +21,7 @@ Note: this guide is for running Go side of the project along with database.
 ```bash
 cd <project root>/go
 ```
-- Install required dependencies
+- Install required dependencies  
 Note: Optional step, will be downloaded on the first backend start.
 ```bash
 go get -u github.com/lib/pq
